@@ -1,0 +1,6 @@
+puresignal:
+  android:
+    name: Pure Signal
+    description: Bitcoin-only news
+    repository: https://github.com/dylanbathurst/puresignal
+    license: MIT
