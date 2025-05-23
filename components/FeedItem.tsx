@@ -1,14 +1,10 @@
 import * as WebBrowser from "expo-web-browser";
 import {
-  getRootEventId,
   NDKEvent,
-  NDKFilter,
-  NDKKind,
   useNDK,
   useNDKCurrentUser,
   useNDKSessionSigners,
   useProfileValue,
-  useSubscribe,
 } from "@nostr-dev-kit/ndk-hooks";
 import { DateTime } from "luxon";
 import { router } from "expo-router";
@@ -23,14 +19,8 @@ import {
 } from "react-native";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
-import React, { useCallback, useMemo } from "react";
-import {
-  Heart,
-  MessageSquareQuote,
-  Repeat2,
-  Share,
-  Zap,
-} from "lucide-react-native";
+import React, { useCallback } from "react";
+import { MessageSquareQuote, Repeat2, Share, Zap } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { useReactionsStore } from "@/stores/reactions";
 import PressableOpacity from "./PressableOpacity";
@@ -69,18 +59,22 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
   const articleStats = reactions.get(item.id);
   const signer = signers.get(currentUser?.pubkey ?? "");
   const everyFifth = index % 5 === 0;
-  const [image] = item.tags.filter((tag) => tag[0] === "image");
-  const [title] = item.tags.filter((tag) => tag[0] === "title");
-  const [link] = item.tags.filter((tag) => tag[0] === "d");
-  const [summary] = item.tags.filter((tag) => tag[0] === "summary");
-  const [publishedAt] = item.tags.filter((tag) => tag[0] === "published_at");
-  const pubDate = DateTime.fromMillis(parseInt(publishedAt[1]));
+  const image = item.tagValue("image");
+  const title = item.tagValue("title");
+  const link = item.tagValue("d");
+  const summary = item.tagValue("summary");
+  const publishedAt = item.tagValue("published_at");
+  const pubDate =
+    publishedAt?.length === 13
+      ? DateTime.fromSeconds(parseInt(publishedAt) / 1000) // I was publishing published_at wrong before
+      : DateTime.fromSeconds(parseInt(publishedAt || ""));
   const now = DateTime.local();
   const { hours, days } = now.diff(pubDate, ["days", "hours"]).toObject();
   const timeAgo = days === 0 ? `${Math.floor(hours!)}h` : `${days}d`;
 
   const _handlePressButtonAsync = async () => {
-    await WebBrowser.openBrowserAsync(link[1]);
+    if (!link) return;
+    await WebBrowser.openBrowserAsync(link);
   };
 
   const handleReact = useCallback(async () => {
@@ -88,7 +82,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
       return router.navigate("/login");
     }
     try {
-      const reaction = await item.react("👏", false);
+      const reaction = await item.react("+", false);
       reaction.tags.push(["k", item.kind.toString()]);
       reaction.tags.push(["client", "Pure Signal"]);
       await reaction.sign(signer);
@@ -107,7 +101,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
       const content = JSON.stringify(item.rawEvent());
       const repost = await item.repost(false, ndk.signer);
       repost.content = content;
-      repost.tags.push(["e", item.id, "wss://relay.puresignal.news"]);
+      repost.tags.push(["e", item.id]);
       repost.tags.push(["p", item.pubkey]);
       repost.tags.push(["k", item.kind.toString()]);
       repost.tags.push(["client", "Pure Signal"]);
@@ -119,9 +113,29 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
     }
   }, []);
 
+  const handleQuote = useCallback(() => {
+    if (!currentUser || !ndk) {
+      return router.navigate("/login");
+    }
+    router.navigate({
+      pathname: "/quote",
+      params: {
+        title,
+        publisherImage: userProfile?.picture,
+        publisherName: userProfile?.name,
+        publisherPubkey: item.author.pubkey,
+        identifier: item.id,
+        dTag: link,
+        image,
+        timeAgo,
+      },
+    });
+  }, [timeAgo, link, userProfile, title, currentUser, ndk, item]);
+
   const handleShare = async () => {
+    if (!link) return;
     await ShareScreen.share({
-      url: link[1],
+      url: link,
     });
   };
 
@@ -197,7 +211,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
                   aspectRatio: 16 / 9,
                   borderRadius: 15,
                 }}
-                src={image[1]}
+                src={image}
               />
             </View>
           )}
@@ -218,11 +232,11 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
             ]}
           >
             <ThemedText type="subtitle" numberOfLines={2} style={{ flex: 1 }}>
-              {title[1]}
+              {title}
             </ThemedText>
             {everyFifth && (
               <ThemedText type="default" numberOfLines={4}>
-                {summary[1]}
+                {summary}
               </ThemedText>
             )}
             {!everyFifth && (
@@ -232,7 +246,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
                   aspectRatio: 16 / 9,
                   borderRadius: 15,
                 }}
-                src={image[1]}
+                src={image}
               />
             )}
           </ThemedView>
@@ -264,12 +278,8 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
           </View>
           <View style={styles.interactionContainer}>
             <PressableOpacity
-              onPress={handleRepost}
-              style={[
-                styles.interactionPressable,
-                { alignItems: "center", opacity: 0.2 },
-              ]}
-              disabled
+              onPress={handleQuote}
+              style={[styles.interactionPressable, { alignItems: "center" }]}
             >
               <MessageSquareQuote size={16} color={Colors.light.icon} />
               <ThemedText
@@ -295,13 +305,6 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
               onPress={handleReact}
               style={[styles.interactionPressable]}
             >
-              {/* <Heart
-                size={16}
-                color={
-                  articleStats?.likedByUser ? "#ff4000" : Colors.light.icon
-                }
-                fill={articleStats?.likedByUser ? "#ff4000" : "transparent"}
-              /> */}
               <Text>👏</Text>
               <ThemedText
                 type="defaultSemiBold"

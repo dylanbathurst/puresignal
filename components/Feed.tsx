@@ -6,7 +6,7 @@ import PublisherList from "./PublisherList";
 import FeedLoader from "./loaders/FeedLoader";
 
 type FeedProps = {
-  articles: (ArticleWithInteraction | Audicles)[];
+  articles: ArticleWithInteraction[];
 };
 const Feed = ({ articles }: FeedProps) => {
   return (

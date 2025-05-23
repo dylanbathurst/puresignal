@@ -4,14 +4,14 @@ export const timeZero = Date.now();
 
 const cacheAdapter = new NDKCacheAdapterSqlite("pure-signal");
 cacheAdapter.initialize();
+export const explicitRelayUrls = [
+  "wss://relay.puresignal.news/",
+  "wss://relay.damus.io/",
+  "wss://nos.lol/",
+  "wss://relay.primal.net/",
+];
 
 export function initNDKInstance() {
-  const explicitRelayUrls = [
-    "wss://relay.puresignal.news",
-    "wss://relay.damus.io",
-    "wss://nos.lol/",
-  ];
-
   const ndk = new NDK({
     cacheAdapter,
     explicitRelayUrls,

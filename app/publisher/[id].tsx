@@ -1,12 +1,7 @@
 import React, { useMemo } from "react";
 import { FlatList } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import {
-  NDKEvent,
-  NDKFilter,
-  useSubscribe,
-  useUserProfile,
-} from "@nostr-dev-kit/ndk-mobile";
+import { NDKFilter, useSubscribe } from "@nostr-dev-kit/ndk-mobile";
 import { renderFeedItem } from "@/components/FeedItem";
 import Profile from "@/components/Profile";
 import FeedItemSeperator from "@/components/FeedItemSeperator";
@@ -35,6 +30,23 @@ const Publisher: React.FC<PublisherProps> = () => {
   );
 
   const { events: articles } = useSubscribe(articlesListFilter);
+
+  articles.forEach((article) => {
+    console.log("fo", article.tagValue("published_at"), article.created_at);
+  });
+
+  articles.sort((a, b) => {
+    const pubA = a.tagValue("published_at");
+    const pubB = b.tagValue("published_at");
+
+    const normalizedPubA =
+      pubA?.length === 13 ? parseInt(pubA) / 1000 : parseInt(pubA || "");
+
+    const normalizedPubB =
+      pubB?.length === 13 ? parseInt(pubB) / 1000 : parseInt(pubB || "");
+
+    return normalizedPubB - normalizedPubA;
+  });
 
   return (
     <ThemedView>

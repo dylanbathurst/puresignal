@@ -7,12 +7,19 @@ import ProfileHeader from "@/components/ProfileHeader";
 import { initNDKInstance } from "@/lib/ndk";
 import { useNDKInit } from "@nostr-dev-kit/ndk-hooks";
 import { useNDKStore, useSessionMonitor } from "@nostr-dev-kit/ndk-mobile";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
+import { StyleSheet } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
 const ndk = initNDKInstance();
 
 export default function RootLayout() {
+  const backgroundColor = useThemeColor(
+    { light: Colors.light.background, dark: Colors.dark.background },
+    "background"
+  );
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -50,7 +57,19 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="login"
-          options={{ presentation: "modal", headerShown: false }}
+          options={{
+            presentation: "modal",
+            headerShown: false,
+            contentStyle: [{ backgroundColor }, styles.modal],
+          }}
+        />
+        <Stack.Screen
+          name="quote"
+          options={{
+            presentation: "modal",
+            headerShown: false,
+            contentStyle: [{ backgroundColor }, styles.modal],
+          }}
         />
         <Stack.Screen name="+not-found" />
       </Stack>
@@ -58,3 +77,7 @@ export default function RootLayout() {
     </Fragment>
   );
 }
+
+const styles = StyleSheet.create({
+  modal: { padding: 16 },
+});

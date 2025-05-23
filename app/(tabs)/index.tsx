@@ -81,18 +81,14 @@ export default function HomeScreen() {
     return mapped;
   }, [interactions]);
 
-  const modifiedArticles = articles
-    // .filter((article) =>
-    //   article.getMatchingTags("client").find((tag) => tag[1] === "Pure Signal")
-    // )
-    .map((article) => {
-      const interactions = mappedInteractions[article.id] || {
-        quotes: 0,
-        reactions: 0,
-        reposts: 0,
-      };
-      return Object.assign(article, { interactions }) as ArticleWithInteraction;
-    });
+  const modifiedArticles = articles.map((article) => {
+    const interactions = mappedInteractions[article.id] || {
+      quotes: 0,
+      reactions: 0,
+      reposts: 0,
+    };
+    return Object.assign(article, { interactions }) as ArticleWithInteraction;
+  });
 
   // const audicles: Audicles = {
   //   id: "audicles",
@@ -101,5 +97,20 @@ export default function HomeScreen() {
 
   // console.log(interactions[interactions.length - 1]);
   // console.log(modifiedArticles.length && modifiedArticles[1].interactions);
+
+  // TODO: Remove this sorting code when my published_at data has propogated for a week or so.
+  modifiedArticles.sort((a, b) => {
+    const pubA = a.tagValue("published_at");
+    const pubB = b.tagValue("published_at");
+
+    const normalizedPubA =
+      pubA?.length === 13 ? parseInt(pubA) / 1000 : parseInt(pubA || "");
+
+    const normalizedPubB =
+      pubB?.length === 13 ? parseInt(pubB) / 1000 : parseInt(pubB || "");
+
+    return normalizedPubB - normalizedPubA;
+  });
+
   return <Feed articles={[...modifiedArticles]} />;
 }
