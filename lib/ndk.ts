@@ -9,11 +9,16 @@ export const explicitRelayUrls = [
   "wss://relay.damus.io/",
   "wss://nos.lol/",
   "wss://relay.primal.net/",
+  "wss://purplepag.es/",
+  "wss://purplerelay.com",
+  "wss://nostr-01.yakihonne.com/",
 ];
 
 export function initNDKInstance() {
   const ndk = new NDK({
     cacheAdapter,
+    enableOutboxModel: true,
+    autoConnectUserRelays: false,
     explicitRelayUrls,
     clientName: "pure-signal",
   });

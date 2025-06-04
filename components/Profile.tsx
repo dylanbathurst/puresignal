@@ -7,6 +7,8 @@ import { Image, Pressable, useColorScheme, View } from "react-native";
 import { Link2 } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import PublisherHeaderLoader from "./loaders/PublisherHeaderLoader";
+import CopyButton from "./CopyButton";
+import { nip19 } from "nostr-tools";
 
 interface ProfileProps {
   id: string;

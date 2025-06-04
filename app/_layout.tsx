@@ -15,6 +15,10 @@ SplashScreen.preventAutoHideAsync();
 
 const ndk = initNDKInstance();
 
+type PublisherParams = {
+  id: string;
+};
+
 export default function RootLayout() {
   const backgroundColor = useThemeColor(
     { light: Colors.light.background, dark: Colors.dark.background },
@@ -52,7 +56,10 @@ export default function RootLayout() {
         <Stack.Screen
           name="publisher/[id]"
           options={{
-            header: ProfileHeader,
+            header: (props) => {
+              const params = props.route.params as PublisherParams;
+              return params?.id ? <ProfileHeader id={params.id} /> : null;
+            },
           }}
         />
         <Stack.Screen
@@ -61,6 +68,13 @@ export default function RootLayout() {
             presentation: "modal",
             headerShown: false,
             contentStyle: [{ backgroundColor }, styles.modal],
+          }}
+        />
+        <Stack.Screen
+          name="audicles"
+          options={{
+            presentation: "modal",
+            headerShown: false,
           }}
         />
         <Stack.Screen

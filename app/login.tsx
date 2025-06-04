@@ -12,13 +12,8 @@ import {
   useNDKCurrentUser,
   useNDKSessionStart,
   useNDKSessionLogin,
-  useSetProfile,
 } from "@nostr-dev-kit/ndk-hooks";
-import {
-  NDKPrivateKeySigner,
-  useNDKSessionSessions,
-  useSessionMonitor,
-} from "@nostr-dev-kit/ndk-mobile";
+import { NDKPrivateKeySigner } from "@nostr-dev-kit/ndk-mobile";
 import { router } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";

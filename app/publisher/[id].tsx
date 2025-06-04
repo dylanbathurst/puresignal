@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { FlatList } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { NDKFilter, useSubscribe } from "@nostr-dev-kit/ndk-mobile";
+import { NDKFilter, NDKKind, useSubscribe } from "@nostr-dev-kit/ndk-mobile";
 import { renderFeedItem } from "@/components/FeedItem";
 import Profile from "@/components/Profile";
 import FeedItemSeperator from "@/components/FeedItemSeperator";
@@ -22,7 +22,7 @@ const Publisher: React.FC<PublisherProps> = () => {
     () => [
       {
         authors: [id],
-        kinds: [30023],
+        kinds: [NDKKind.Article],
         limit: 100,
       } as NDKFilter,
     ],
@@ -30,10 +30,6 @@ const Publisher: React.FC<PublisherProps> = () => {
   );
 
   const { events: articles } = useSubscribe(articlesListFilter);
-
-  articles.forEach((article) => {
-    console.log("fo", article.tagValue("published_at"), article.created_at);
-  });
 
   articles.sort((a, b) => {
     const pubA = a.tagValue("published_at");

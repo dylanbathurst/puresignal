@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import NDK, {
+import {
   NDKEvent,
   NDKFilter,
   NDKKind,
@@ -28,15 +28,19 @@ import { useCallback, useMemo, useState } from "react";
 import FeedItemSeperator from "@/components/FeedItemSeperator";
 import LikeActivity from "@/components/profile/LikeActivity";
 import RepostActivity from "@/components/profile/RepostActivity";
+import CopyButton from "@/components/CopyButton";
+import { nip19 } from "nostr-tools";
 
 const Profile = () => {
   const theme = useColorScheme() ?? "light";
   const logout = useNDKSessionLogout();
   const currentUserProfile = useCurrentUserProfile();
-  const pubkey = useNDKCurrentPubkey();
-  const [copied, setCopied] = useState(false);
-
-  const profile = useProfileValue(pubkey, {
+  const pubkeyHex = useNDKCurrentPubkey();
+  const npub = useMemo(
+    () => (pubkeyHex ? nip19.npubEncode(pubkeyHex) : ""),
+    [pubkeyHex]
+  );
+  const profile = useProfileValue(pubkeyHex, {
     refresh: true,
   });
 
@@ -70,25 +74,16 @@ const Profile = () => {
     });
   };
 
-  const copyToClipboard = useCallback(async () => {
-    if (!currentUserProfile || !pubkey) return;
-    await Clipboard.setStringAsync(pubkey);
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 3000);
-  }, [currentUserProfile, pubkey]);
-
   const interactionsFilter = useMemo(
     () => [
       {
         kinds: [NDKKind.GenericRepost, NDKKind.Reaction],
-        authors: [pubkey],
+        authors: [pubkeyHex],
         "#k": ["30023"],
         limit: 100,
       } as NDKFilter,
     ],
-    [pubkey]
+    [pubkeyHex]
   );
 
   const { events: interactions } = useSubscribe(interactionsFilter);
@@ -146,26 +141,7 @@ const Profile = () => {
                   style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
                 >
                   <ThemedText type="subtitle">@{profile.name}</ThemedText>
-                  <Pressable onPress={copyToClipboard}>
-                    {copied ? (
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 3,
-                        }}
-                      >
-                        <CopyCheck size={15} color={Colors[theme].link} />
-                        <ThemedText
-                          style={{ fontSize: 10, color: Colors[theme].link }}
-                        >
-                          Copied
-                        </ThemedText>
-                      </View>
-                    ) : (
-                      <Copy size={15} color={Colors[theme].tint} />
-                    )}
-                  </Pressable>
+                  <CopyButton textToCopy={npub} />
                 </View>
               </View>
             </View>

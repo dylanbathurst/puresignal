@@ -90,14 +90,6 @@ export default function HomeScreen() {
     return Object.assign(article, { interactions }) as ArticleWithInteraction;
   });
 
-  // const audicles: Audicles = {
-  //   id: "audicles",
-  //   items: modifiedArticles.slice(0, 9),
-  // };
-
-  // console.log(interactions[interactions.length - 1]);
-  // console.log(modifiedArticles.length && modifiedArticles[1].interactions);
-
   // TODO: Remove this sorting code when my published_at data has propogated for a week or so.
   modifiedArticles.sort((a, b) => {
     const pubA = a.tagValue("published_at");

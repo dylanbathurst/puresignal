@@ -14,7 +14,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 import { nip19 } from "nostr-tools";
 import { Image, StyleSheet, TextInput, View } from "react-native";
-import { explicitRelayUrls } from "@/lib/ndk";
 
 export default function Quote() {
   const [quoteText, setQuoteText] = useState<string>();
@@ -69,12 +68,7 @@ export default function Quote() {
       "mention",
     ]);
     event.tags.push(["p", publisherPubkey, "", "mention"]);
-    explicitRelayUrls.forEach((url) => {
-      event.tags.push(["r", url]);
-    });
-
     await event.publish();
-    console.log("published quote reply");
     router.back();
   }, [ndk, quoteText]);
 

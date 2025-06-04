@@ -18,7 +18,6 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         sceneStyle: { backgroundColor: Colors[theme].background },
-        animation: "fade",
       }}
     >
       <Tabs.Screen
