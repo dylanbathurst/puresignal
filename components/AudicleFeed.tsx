@@ -9,10 +9,10 @@ import AudiclePromo from "./AudiclePromo";
 import useNostrAuth from "@/lib/hooks/useNostrAuth";
 import AudicleItem, { Audicle } from "./AudicleItem";
 import AudicleItemLoader from "./loaders/AudicleItemLoader";
-import {
-  useNDKCurrentPubkey,
-  useNDKCurrentUser,
-} from "@nostr-dev-kit/ndk-hooks";
+import Animated, { FadeIn } from "react-native-reanimated";
+import { useNDKCurrentPubkey } from "@nostr-dev-kit/ndk-hooks";
+
+const AnimatedThemedText = Animated.createAnimatedComponent(ThemedText);
 
 interface AudiclesResponse {
   audicles: Audicle[];
@@ -21,7 +21,7 @@ interface AudiclesResponse {
 
 const AudicleFeed = () => {
   const [audicles, setAudicles] = useState<Audicle[]>([]);
-  const [count, setCount] = useState<number>();
+  const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const theme = useColorScheme() ?? "light";
@@ -73,7 +73,12 @@ const AudicleFeed = () => {
       <View style={styles.sectionContainer}>
         <BookHeadphones size={20} color={Colors[theme].text} />
         <ThemedText style={styles.sectionTitle}>Audicles</ThemedText>
-        <ThemedText type="defaultSemiBold">({count})</ThemedText>
+        <AnimatedThemedText
+          entering={FadeIn.duration(500)}
+          type="defaultSemiBold"
+        >
+          {count > 0 ? `(${count})` : null}
+        </AnimatedThemedText>
       </View>
       <FlatList
         data={audicles}
@@ -87,11 +92,11 @@ const AudicleFeed = () => {
         }
         ListFooterComponentStyle={styles.listFooterContainer}
         ListEmptyComponent={
-          <>
+          <View style={styles.loaderContainer}>
             <AudicleItemLoader />
             <AudicleItemLoader />
             <AudicleItemLoader />
-          </>
+          </View>
         }
       />
     </ThemedView>
@@ -105,6 +110,7 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
   },
+  loaderContainer: { flexDirection: "row" },
   listFooterContainer: {
     flexDirection: "row",
   },

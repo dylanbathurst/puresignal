@@ -12,6 +12,7 @@ import { useReactionsStore } from "@/stores/reactions";
 export default function HomeScreen() {
   const { addEvents } = useReactionsStore();
   const currentUserPubkey = useNDKCurrentPubkey();
+
   const articlesListFilter = useMemo(
     () => [
       {
@@ -24,7 +25,8 @@ export default function HomeScreen() {
   );
   const { events: articles } = useSubscribe(articlesListFilter);
 
-  const articleIds = articles.map((a) => a.id);
+  const articleIds = useMemo(() => articles.map((a) => a.id), [articles]);
+
   const interactionsFilter = useMemo(() => {
     return [
       {
@@ -36,15 +38,15 @@ export default function HomeScreen() {
     ];
   }, [articleIds]);
 
-  const { events: interactions } = useSubscribe(
-    interactionsFilter,
-    { skipVerification: true },
-    [articleIds]
-  );
+  const { events: interactions } = useSubscribe(interactionsFilter, {
+    skipVerification: true,
+  });
 
   useEffect(() => {
-    addEvents(interactions, currentUserPubkey);
-  }, [interactions]);
+    if (interactions.length > 0 && currentUserPubkey) {
+      addEvents(interactions, currentUserPubkey);
+    }
+  }, [interactions, currentUserPubkey, addEvents]);
 
   const mappedInteractions = useMemo(() => {
     const mapped: Record<
@@ -52,18 +54,18 @@ export default function HomeScreen() {
       { reposts: number; quotes: number; reactions: number }
     > = {};
 
-    interactions.forEach((interaction, i) => {
+    interactions.forEach((interaction) => {
       const articleTag = interaction.tags.find((t) => t[0] === "e");
-
       if (!articleTag) return;
+
       if (!mapped[articleTag[1]]) {
         mapped[articleTag[1]] = {
           quotes: 0,
           reactions: 0,
           reposts: 0,
         };
-        return;
       }
+
       switch (interaction.kind) {
         case NDKKind.GenericRepost:
           mapped[articleTag[1]].reposts += 1;
@@ -81,28 +83,31 @@ export default function HomeScreen() {
     return mapped;
   }, [interactions]);
 
-  const modifiedArticles = articles.map((article) => {
-    const interactions = mappedInteractions[article.id] || {
-      quotes: 0,
-      reactions: 0,
-      reposts: 0,
-    };
-    return Object.assign(article, { interactions }) as ArticleWithInteraction;
-  });
+  const modifiedArticles = useMemo(() => {
+    return articles
+      .map((article) => {
+        const interactions = mappedInteractions[article.id] || {
+          quotes: 0,
+          reactions: 0,
+          reposts: 0,
+        };
+        return Object.assign(article, {
+          interactions,
+        }) as ArticleWithInteraction;
+      })
+      .sort((a, b) => {
+        const pubA = a.tagValue("published_at");
+        const pubB = b.tagValue("published_at");
 
-  // TODO: Remove this sorting code when my published_at data has propogated for a week or so.
-  modifiedArticles.sort((a, b) => {
-    const pubA = a.tagValue("published_at");
-    const pubB = b.tagValue("published_at");
+        const normalizedPubA =
+          pubA?.length === 13 ? parseInt(pubA) / 1000 : parseInt(pubA || "");
 
-    const normalizedPubA =
-      pubA?.length === 13 ? parseInt(pubA) / 1000 : parseInt(pubA || "");
+        const normalizedPubB =
+          pubB?.length === 13 ? parseInt(pubB) / 1000 : parseInt(pubB || "");
 
-    const normalizedPubB =
-      pubB?.length === 13 ? parseInt(pubB) / 1000 : parseInt(pubB || "");
+        return normalizedPubB - normalizedPubA;
+      });
+  }, [articles, mappedInteractions]);
 
-    return normalizedPubB - normalizedPubA;
-  });
-
-  return <Feed articles={[...modifiedArticles]} />;
+  return <Feed articles={modifiedArticles} />;
 }

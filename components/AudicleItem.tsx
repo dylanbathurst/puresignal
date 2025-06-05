@@ -1,5 +1,5 @@
 import { useProfileValue } from "@nostr-dev-kit/ndk-hooks";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 import {
   Dimensions,
   Image,
@@ -12,7 +12,8 @@ import { ThemedText } from "./ThemedText";
 import PressableOpacity from "./PressableOpacity";
 import { Pause, Triangle as Play } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import { useVideoPlayer, VideoMetadata } from "expo-video";
+import { useEvent } from "expo";
 
 export interface Audicle {
   pubkey: string;
@@ -24,15 +25,36 @@ export interface Audicle {
 const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
   const theme = useColorScheme() ?? "light";
   const publisherProfile = useProfileValue(pubkey);
-  const player = useAudioPlayer({ uri: url });
-  const { playing, didJustFinish } = useAudioPlayerStatus(player);
-  const isPlaying = playing && !didJustFinish;
-  const handlePlay = useCallback(() => {
-    player.play();
+  const mediaMetadata = useMemo(() => {
+    return {
+      artwork: image,
+      title,
+      artist: publisherProfile?.name,
+    } as VideoMetadata;
+  }, [publisherProfile, image, title]);
+
+  const videoPlayer = useVideoPlayer(
+    {
+      uri: url,
+      metadata: mediaMetadata,
+    },
+    (p) => {
+      p.loop = false;
+      p.staysActiveInBackground = true;
+      p.showNowPlayingNotification = true;
+    }
+  );
+
+  const { isPlaying } = useEvent(videoPlayer, "playingChange", {
+    isPlaying: videoPlayer.playing,
+  });
+
+  const handlePlay = useCallback(async () => {
+    videoPlayer.play();
   }, [url]);
 
   const handlePause = useCallback(() => {
-    player.pause();
+    videoPlayer.pause();
   }, [url]);
 
   return (

@@ -44,7 +44,14 @@
       ],
       "expo-secure-store",
       "expo-sqlite",
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
