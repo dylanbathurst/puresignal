@@ -17,7 +17,7 @@ const Profile: FC<ProfileProps> = ({ id }) => {
   const userProfile = useProfileValue(id);
   const theme = useColorScheme() ?? "light";
   const { link } = Colors[theme];
-  const { website, picture, displayName, bio } = userProfile || {};
+  const { website, picture, name, about, nip05 } = userProfile || {};
 
   const handleOpenWebsite = useCallback(async () => {
     if (!website) return;
@@ -36,7 +36,11 @@ const Profile: FC<ProfileProps> = ({ id }) => {
       {!userProfile ? (
         <PublisherHeaderLoader />
       ) : (
-        <View style={{ gap: 12 }}>
+        <View
+          style={{
+            gap: 12,
+          }}
+        >
           <Image
             source={{
               uri: picture,
@@ -47,16 +51,15 @@ const Profile: FC<ProfileProps> = ({ id }) => {
               borderRadius: 15,
             }}
           />
-          <View style={{ gap: 8, flex: 1 }}>
-            <View>
-              <ThemedText type="title" numberOfLines={2}>
-                {displayName}
-              </ThemedText>
-              <ThemedText type="defaultSemiBold" style={{ opacity: 0.7 }}>
-                {bio}
-              </ThemedText>
-            </View>
+          <View>
+            <ThemedText type="title" numberOfLines={1}>
+              {name}
+            </ThemedText>
           </View>
+
+          <ThemedText type="defaultSemiBold" style={{ opacity: 0.7 }}>
+            {about}
+          </ThemedText>
           {url && (
             <Pressable
               onPress={handleOpenWebsite}

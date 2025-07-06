@@ -58,7 +58,7 @@ export default function Quote() {
     });
     const event = new NDKEvent(ndk);
     event.kind = NDKKind.Text;
-    event.content = `${quoteText}\n${naddr}`;
+    event.content = `${quoteText}\n nostr:${naddr}`;
     event.tags.push(["client", "Pure Signal"]);
     event.tags.push(["e", identifier]);
     event.tags.push([

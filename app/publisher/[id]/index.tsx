@@ -47,7 +47,9 @@ const Publisher: React.FC<PublisherProps> = () => {
   return (
     <ThemedView>
       <FlatList
-        ListHeaderComponent={() => <Profile id={id} />}
+        style={{
+          paddingTop: 18,
+        }}
         data={articles}
         ItemSeparatorComponent={FeedItemSeperator}
         keyExtractor={(item) => item.id}
