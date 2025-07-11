@@ -14,9 +14,7 @@
       "bundleIdentifier": "com.dylanbathurst.puresignal",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": [
-          "audio"
-        ]
+        "UIBackgroundModes": ["audio"]
       }
     },
     "android": {
