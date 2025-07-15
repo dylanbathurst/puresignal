@@ -7,6 +7,9 @@ const tintColorLight = "#000";
 const tintColorDark = "#fff";
 
 export const Colors = {
+  pallete: {
+    orange: "gold",
+  },
   light: {
     text: "#11181C",
     background: "#f5f5f5",

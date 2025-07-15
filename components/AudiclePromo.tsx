@@ -47,22 +47,28 @@ const AudiclePromo = () => {
               <BookHeadphones
                 style={{ marginTop: 5 }}
                 size={40}
-                color={Colors[theme].text}
+                color={Colors.dark.text}
               />
               <View>
-                <ThemedText style={styles.title}>
+                <ThemedText style={[styles.title, { color: Colors.dark.text }]}>
                   Unlock more Audicles
                 </ThemedText>
-                <ThemedText style={styles.price}>$9.99 a month</ThemedText>
+                <ThemedText style={[styles.price, { color: Colors.dark.text }]}>
+                  $9.99 a month
+                </ThemedText>
               </View>
             </View>
           </View>
           <View>
             <PressableOpacity style={[styles.button]} onPress={handleSubscribe}>
-              <ThemedText style={styles.buttonText}>Subscribe Now</ThemedText>
+              <ThemedText
+                style={[styles.buttonText, { color: Colors.dark.text }]}
+              >
+                Subscribe Now
+              </ThemedText>
             </PressableOpacity>
             <Link
-              style={[styles.info, { color: Colors[theme].text }]}
+              style={[styles.info, { color: Colors.dark.text }]}
               href={"/audicles"}
             >
               Learn more

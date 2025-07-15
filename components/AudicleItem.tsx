@@ -23,7 +23,6 @@ export interface Audicle {
 }
 
 const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
-  const theme = useColorScheme() ?? "light";
   const publisherProfile = useProfileValue(pubkey);
   const mediaMetadata = useMemo(() => {
     return {
@@ -67,7 +66,7 @@ const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
         <View style={styles.content}>
           <ThemedText
             type="defaultSemiBold"
-            style={styles.audicleTitle}
+            style={[styles.audicleTitle, { color: Colors.dark.text }]}
             numberOfLines={4}
           >
             {title}
@@ -85,7 +84,7 @@ const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
                 style={styles.footerTitle}
                 numberOfLines={2}
               >
-                {publisherProfile?.displayName}
+                {publisherProfile?.displayName?.replace(" (News Bot)", "")}
               </ThemedText>
             </View>
             {isPlaying ? (
@@ -93,8 +92,8 @@ const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
                 <View>
                   <Pause
                     size={24}
-                    fill={Colors[theme].text}
-                    color={Colors[theme].text}
+                    fill={Colors.light.white90}
+                    color={Colors.light.white90}
                   />
                 </View>
               </PressableOpacity>
@@ -103,8 +102,8 @@ const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
                 <View style={styles.playButtonInner}>
                   <Play
                     size={24}
-                    fill={Colors[theme].text}
-                    color={Colors[theme].text}
+                    fill={Colors.light.white90}
+                    color={Colors.light.white90}
                   />
                 </View>
               </PressableOpacity>
@@ -151,6 +150,7 @@ const styles = StyleSheet.create({
     gap: 10,
     alignItems: "center",
     justifyContent: "space-between",
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
   footerLeft: {
     gap: 5,
@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
   footerTitle: {
     fontSize: 8,
     lineHeight: 10,
+    color: Colors.light.white90,
   },
   audicleContainer: {
     overflow: "hidden",
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   audicleTitle: {
     lineHeight: 15,
     padding: 10,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
   playButton: {
     width: 40,

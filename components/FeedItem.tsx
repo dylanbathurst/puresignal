@@ -20,7 +20,13 @@ import {
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import React, { useCallback } from "react";
-import { MessageSquareQuote, Repeat2, Share, Zap } from "lucide-react-native";
+import {
+  Heart,
+  MessageSquareQuote,
+  Repeat2,
+  Share,
+  Zap,
+} from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
 import { useReactionsStore } from "@/stores/reactions";
 import PressableOpacity from "./PressableOpacity";
@@ -69,8 +75,15 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
       ? DateTime.fromSeconds(parseInt(publishedAt) / 1000) // I was publishing published_at wrong before
       : DateTime.fromSeconds(parseInt(publishedAt || ""));
   const now = DateTime.local();
-  const { hours, days } = now.diff(pubDate, ["days", "hours"]).toObject();
-  const timeAgo = days === 0 ? `${Math.floor(hours!)}h` : `${days}d`;
+  const { hours, days, minutes } = now
+    .diff(pubDate, ["days", "hours", "minutes"])
+    .toObject();
+  const timeAgo =
+    days === 0
+      ? hours === 0
+        ? `${Math.floor(minutes!)}m`
+        : `${Math.floor(hours!)}h`
+      : `${days}d`;
 
   const _handlePressButtonAsync = async () => {
     if (!link) return;
@@ -186,7 +199,10 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
               type="subtitle"
               style={{ maxWidth: 200, fontSize: 15 }}
             >
-              {userProfile?.displayName}
+              {(userProfile?.displayName || userProfile?.name)?.replace(
+                " (News Bot)",
+                ""
+              )}
             </ThemedText>
           </View>
           <ThemedText
@@ -265,7 +281,6 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
                 color={
                   articleStats?.repostedByUser ? "#ff4000" : Colors.light.icon
                 }
-                // fill={articleStats?.repostedByUser ? "#ff4000" : "transparent"}
               />
               <ThemedText
                 type="defaultSemiBold"
@@ -305,7 +320,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
               onPress={handleReact}
               style={[styles.interactionPressable]}
             >
-              <Text>👏</Text>
+              <Heart size={16} color={Colors.light.icon} />
               <ThemedText
                 type="defaultSemiBold"
                 lightColor={Colors.light.text}

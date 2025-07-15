@@ -1,6 +1,6 @@
 import { ThemedView } from "./ThemedView";
 import { FlatList, StyleSheet, useColorScheme, View } from "react-native";
-import { ArticleWithInteraction, Audicles, renderFeedItem } from "./FeedItem";
+import { ArticleWithInteraction, renderFeedItem } from "./FeedItem";
 import FeedItemSeperator from "./FeedItemSeperator";
 import PublisherList from "./PublisherList";
 import FeedLoader from "./loaders/FeedLoader";

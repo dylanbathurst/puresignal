@@ -1,5 +1,4 @@
-import { ScrollView, StyleSheet, View } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
+import { ScrollView, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useSubscribe } from "@nostr-dev-kit/ndk-hooks";
 import { NDKEvent, NDKFilter, NDKKind } from "@nostr-dev-kit/ndk";
@@ -42,6 +41,7 @@ export default function ActivityScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     gap: 8,
     paddingHorizontal: 12,
   },

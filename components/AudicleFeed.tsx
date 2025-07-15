@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View, Dimensions } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
@@ -11,6 +11,7 @@ import AudicleItem, { Audicle } from "./AudicleItem";
 import AudicleItemLoader from "./loaders/AudicleItemLoader";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useNDKCurrentPubkey } from "@nostr-dev-kit/ndk-hooks";
+import { useFocusEffect } from "expo-router";
 
 const AnimatedThemedText = Animated.createAnimatedComponent(ThemedText);
 
@@ -22,39 +23,38 @@ interface AudiclesResponse {
 const AudicleFeed = () => {
   const [audicles, setAudicles] = useState<Audicle[]>([]);
   const [count, setCount] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const theme = useColorScheme() ?? "light";
   const currentPubkey = useNDKCurrentPubkey();
   const { getAuthHeader } = useNostrAuth();
 
-  useEffect(() => {
-    const fetchAudicles = async () => {
-      try {
-        const audicleEndpoint = `${process.env.EXPO_PUBLIC_API_URL}/audicles`;
-        const response = await fetch(audicleEndpoint, {
-          headers: {
-            ...(await getAuthHeader({
-              url: audicleEndpoint,
-              method: "GET",
-            })),
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch audicles");
-        }
-        const data: AudiclesResponse = await response.json();
-        setAudicles(data.audicles);
-        setCount(data.total);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
+  const fetchAudicles = useCallback(async () => {
+    try {
+      const audicleEndpoint = `${process.env.EXPO_PUBLIC_API_URL}/audicles`;
+      const response = await fetch(audicleEndpoint, {
+        headers: {
+          ...(await getAuthHeader({
+            url: audicleEndpoint,
+            method: "GET",
+          })),
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch audicles");
       }
-    };
+      const data: AudiclesResponse = await response.json();
+      setAudicles(data.audicles);
+      setCount(data.total);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    }
+  }, []);
 
-    fetchAudicles();
-  }, [currentPubkey]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchAudicles();
+    }, [currentPubkey])
+  );
 
   const renderAudicle = ({ item }: { item: Audicle }) => (
     <AudicleItem {...item} />

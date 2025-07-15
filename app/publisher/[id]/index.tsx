@@ -3,7 +3,6 @@ import { FlatList } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { NDKFilter, NDKKind, useSubscribe } from "@nostr-dev-kit/ndk-mobile";
 import { renderFeedItem } from "@/components/FeedItem";
-import Profile from "@/components/Profile";
 import FeedItemSeperator from "@/components/FeedItemSeperator";
 import { ThemedView } from "@/components/ThemedView";
 import FeedLoader from "@/components/loaders/FeedLoader";
