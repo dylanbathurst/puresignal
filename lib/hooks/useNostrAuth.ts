@@ -45,7 +45,6 @@ export const useNostrAuth = () => {
       try {
         if (!ndk || !currentNDKPubkey) return undefined;
         // Create the token payload
-        console.log(url, method, nip98Signer, true, body || undefined);
         const token = await nip98.getToken(
           url,
           method,

@@ -67,7 +67,7 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
   const everyFifth = index % 5 === 0;
   const image = item.tagValue("image");
   const title = item.tagValue("title");
-  const link = item.tagValue("d");
+  const link = item.tagValue("u");
   const summary = item.tagValue("summary");
   const publishedAt = item.tagValue("published_at");
   const pubDate =
@@ -137,8 +137,8 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
         publisherImage: userProfile?.picture,
         publisherName: userProfile?.name,
         publisherPubkey: item.author.pubkey,
-        identifier: item.id,
-        dTag: link,
+        originalEventId: item.id,
+        dTag: item.dTag,
         image,
         timeAgo,
       },

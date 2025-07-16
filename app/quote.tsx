@@ -23,7 +23,7 @@ export default function Quote() {
   );
   const backgroundColor = borderBottomColor;
   const text = useThemeColor(
-    { light: Colors.light.white80, dark: Colors.dark.text },
+    { light: Colors.light.text, dark: Colors.dark.text },
     "text"
   );
 
@@ -33,7 +33,7 @@ export default function Quote() {
     image,
     title,
     dTag,
-    identifier,
+    originalEventId,
     publisherName,
     publisherImage,
     publisherPubkey,
@@ -42,7 +42,7 @@ export default function Quote() {
     image: string;
     title: string;
     dTag: string;
-    identifier: string;
+    originalEventId: string;
     publisherName: string;
     publisherImage: string;
     publisherPubkey: string;
@@ -51,26 +51,29 @@ export default function Quote() {
 
   const handlePost = useCallback(async () => {
     if (!ndk || !publisherPubkey) return;
+
     const naddr = nip19.naddrEncode({
-      identifier,
+      identifier: dTag, // Use dTag consistently
       kind: NDKKind.Article,
       pubkey: publisherPubkey,
     });
+
     const event = new NDKEvent(ndk);
     event.kind = NDKKind.Text;
-    event.content = `${quoteText}\n nostr:${naddr}`;
+    event.content = `${quoteText} \nnostr:${naddr}`;
     event.tags.push(["client", "Pure Signal"]);
-    event.tags.push(["e", identifier]);
     event.tags.push([
       "a",
       `${NDKKind.Article}:${publisherPubkey}:${dTag}`,
       "",
       "mention",
     ]);
+
     event.tags.push(["p", publisherPubkey, "", "mention"]);
+
     await event.publish();
     router.back();
-  }, [ndk, quoteText]);
+  }, [ndk, quoteText, dTag, publisherPubkey, originalEventId]);
 
   const handleCancel = () => {
     router.back();
@@ -89,7 +92,7 @@ export default function Quote() {
           onPress={handlePost}
           style={[styles.baseButton, styles.postButton]}
         >
-          <ThemedText>Post</ThemedText>
+          <ThemedText style={styles.postButtonText}>Post</ThemedText>
         </PressableOpacity>
       </View>
       <View style={styles.reply}>
@@ -194,4 +197,5 @@ const styles = StyleSheet.create({
   },
   baseButton: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 14 },
   postButton: { backgroundColor: "#147017" },
+  postButtonText: { color: Colors.light.white90 },
 });

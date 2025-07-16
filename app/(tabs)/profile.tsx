@@ -161,7 +161,6 @@ const Profile = () => {
             <ThemedText type="subtitle">Activity</ThemedText>
             {reactedArticles.length > 0 ? (
               reactedArticles.map((interaction) => {
-                console.log(interaction.getMatchingTags("e"));
                 if (!interaction.getMatchingTags("e").length) return;
                 const article =
                   mappedArticles[interaction.getMatchingTags("e")[0][1]];
@@ -169,7 +168,6 @@ const Profile = () => {
                 const title = article.tags.find((t) => t[0] === "title");
                 const d = article.tags.find((t) => t[0] === "d");
 
-                console.log("getting herereer", title, d);
                 if (!title || !d) return null;
 
                 switch (interaction.kind) {
