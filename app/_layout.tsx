@@ -9,7 +9,7 @@ import { useNDKInit } from "@nostr-dev-kit/ndk-hooks";
 import { useNDKStore, useSessionMonitor } from "@nostr-dev-kit/ndk-mobile";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -59,6 +59,14 @@ export default function RootLayout() {
             header: (props) => {
               const params = props.route.params as PublisherParams;
               return params?.id ? <ProfileHeader id={params.id} /> : null;
+            },
+          }}
+        />
+        <Stack.Screen
+          name="article/[id]/index"
+          options={{
+            header: () => {
+              return <View>Oh hai!</View>;
             },
           }}
         />

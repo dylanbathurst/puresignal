@@ -1,4 +1,3 @@
-import * as WebBrowser from "expo-web-browser";
 import {
   NDKEvent,
   useNDK,
@@ -8,7 +7,7 @@ import {
 } from "@nostr-dev-kit/ndk-hooks";
 import { DateTime } from "luxon";
 import { router } from "expo-router";
-import { Share as ShareScreen, Text } from "react-native";
+import { Share as ShareScreen } from "react-native";
 import {
   Pressable,
   View,
@@ -87,7 +86,8 @@ const FeedItem: React.FC<FeedItemProps> = ({ item, index }) => {
 
   const _handlePressButtonAsync = async () => {
     if (!link) return;
-    await WebBrowser.openBrowserAsync(link);
+    // await WebBrowser.openBrowserAsync(link);
+    router.navigate({ pathname: "/article/[id]", params: { id: item.id } });
   };
 
   const handleReact = useCallback(async () => {

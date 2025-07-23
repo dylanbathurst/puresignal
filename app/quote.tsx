@@ -1,5 +1,4 @@
 import PressableOpacity from "@/components/PressableOpacity";
-import TabBarButton from "@/components/TabBarButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
@@ -18,7 +17,7 @@ import { Image, StyleSheet, TextInput, View } from "react-native";
 export default function Quote() {
   const [quoteText, setQuoteText] = useState<string>();
   const borderBottomColor = useThemeColor(
-    { light: Colors.light.white004, dark: Colors.light.white004 },
+    { light: Colors.light.text004, dark: Colors.light.text004 },
     "icon"
   );
   const backgroundColor = borderBottomColor;
@@ -56,6 +55,7 @@ export default function Quote() {
       identifier: dTag, // Use dTag consistently
       kind: NDKKind.Article,
       pubkey: publisherPubkey,
+      relays: ["wss://relay.puresignal.news"],
     });
 
     const event = new NDKEvent(ndk);
@@ -65,11 +65,16 @@ export default function Quote() {
     event.tags.push([
       "a",
       `${NDKKind.Article}:${publisherPubkey}:${dTag}`,
-      "",
+      "wss://relay.puresignal.news",
       "mention",
     ]);
 
-    event.tags.push(["p", publisherPubkey, "", "mention"]);
+    event.tags.push([
+      "p",
+      publisherPubkey,
+      "wss://relay.puresignal.news",
+      "mention",
+    ]);
 
     await event.publish();
     router.back();
@@ -129,12 +134,12 @@ export default function Quote() {
             style={{
               height: 10,
               width: 0.5,
-              backgroundColor: Colors.light.white30,
+              backgroundColor: Colors.light.text30,
             }}
           />
           <ThemedText
-            lightColor={Colors.light.white30}
-            darkColor={Colors.light.white30}
+            lightColor={Colors.light.text30}
+            darkColor={Colors.light.text30}
           >
             {timeAgo}
           </ThemedText>
@@ -197,5 +202,5 @@ const styles = StyleSheet.create({
   },
   baseButton: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 14 },
   postButton: { backgroundColor: "#147017" },
-  postButtonText: { color: Colors.light.white90 },
+  postButtonText: { color: Colors.light.text90 },
 });

@@ -32,7 +32,7 @@ function EmbeddedContent({ eventId }: { eventId: string }) {
   const [profile, setProfile] = useState<NDKUserProfile>();
   const event = useEvent(eventId);
   const backgroundColor = useThemeColor(
-    { light: Colors.light.white004, dark: Colors.light.white004 },
+    { light: Colors.light.text004, dark: Colors.light.text004 },
     "icon"
   );
   useEffect(() => {

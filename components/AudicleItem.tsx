@@ -92,8 +92,8 @@ const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
                 <View>
                   <Pause
                     size={24}
-                    fill={Colors.light.white90}
-                    color={Colors.light.white90}
+                    fill={Colors.light.text90}
+                    color={Colors.light.text90}
                   />
                 </View>
               </PressableOpacity>
@@ -102,8 +102,8 @@ const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
                 <View style={styles.playButtonInner}>
                   <Play
                     size={24}
-                    fill={Colors.light.white90}
-                    color={Colors.light.white90}
+                    fill={Colors.light.text90}
+                    color={Colors.light.text90}
                   />
                 </View>
               </PressableOpacity>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   footerTitle: {
     fontSize: 8,
     lineHeight: 10,
-    color: Colors.light.white90,
+    color: Colors.light.text90,
   },
   audicleContainer: {
     overflow: "hidden",

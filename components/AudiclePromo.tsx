@@ -20,7 +20,7 @@ const AudiclePromo = () => {
   const theme = useColorScheme() ?? "light";
   const currentUserPubkey = useNDKCurrentPubkey();
   const backgroundColor = useThemeColor(
-    { light: Colors.light.white004, dark: Colors.light.white004 },
+    { light: Colors.light.text004, dark: Colors.light.text004 },
     "icon"
   );
 
