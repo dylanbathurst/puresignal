@@ -202,5 +202,5 @@ const styles = StyleSheet.create({
   },
   baseButton: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 14 },
   postButton: { backgroundColor: "#147017" },
-  postButtonText: { color: Colors.light.text90 },
+  postButtonText: { color: Colors.dark.text },
 });

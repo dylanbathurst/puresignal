@@ -92,8 +92,8 @@ const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
                 <View>
                   <Pause
                     size={24}
-                    fill={Colors.light.text90}
-                    color={Colors.light.text90}
+                    fill={Colors.dark.text90}
+                    color={Colors.dark.text90}
                   />
                 </View>
               </PressableOpacity>
@@ -102,8 +102,8 @@ const AudicleItem: FC<Audicle> = ({ image, pubkey, title, url }) => {
                 <View style={styles.playButtonInner}>
                   <Play
                     size={24}
-                    fill={Colors.light.text90}
-                    color={Colors.light.text90}
+                    fill={Colors.dark.text90}
+                    color={Colors.dark.text90}
                   />
                 </View>
               </PressableOpacity>

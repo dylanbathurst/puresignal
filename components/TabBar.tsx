@@ -12,7 +12,7 @@ const TabBar: FC<BottomTabBarProps> = ({ navigation, descriptors, state }) => {
   return (
     <ThemedView
       darkColor={Colors.dark.black80}
-      lightColor={Colors.light.text80}
+      lightColor={Colors.dark.text80}
       style={[styles.container]}
     >
       {state.routes.map((route, index) => {
